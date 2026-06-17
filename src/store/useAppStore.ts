@@ -158,6 +158,8 @@ export const useAppStore = create<AppStore>((set, get) => ({
       explorationPath: [],
       routeTags: {},
       explorationStartTime: null,
+      unlockedNodes: [],
+      exploredEdges: [],
     };
 
     set(resetState);

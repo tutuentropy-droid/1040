@@ -16,6 +16,7 @@ import { useAppStore } from '@/store/useAppStore';
 import { questions } from '@/data/questions';
 import { philosophyNodes } from '@/data/nodes';
 import { cn } from '@/lib/utils';
+import { getCategoryColor } from '@/utils/colors';
 import type { ExplorationRecord } from '@/types';
 
 // 格式化日期
@@ -213,15 +214,15 @@ function RecordItem({ record, index, isLast, onDelete }: RecordItemProps) {
                   key={node!.id}
                   className="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs"
                   style={{
-                    background: `${node!.color}12`,
-                    border: `1px solid ${node!.color}40`,
+                    background: `${getCategoryColor(node!.category)}12`,
+                    border: `1px solid ${getCategoryColor(node!.category)}40`,
                   }}
                 >
                   <span
                     className="w-2 h-2 rounded-full"
-                    style={{ backgroundColor: node!.color }}
+                    style={{ backgroundColor: getCategoryColor(node!.category) }}
                   />
-                  <span style={{ color: node!.color }}>{node!.name}</span>
+                  <span style={{ color: getCategoryColor(node!.category) }}>{node!.name}</span>
                 </div>
               ))}
               {unlockedNodesData.length > 6 && (

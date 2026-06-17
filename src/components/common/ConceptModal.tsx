@@ -3,15 +3,7 @@ import { X, Calendar, Tag, Users, BookOpen, Lightbulb, Lock } from 'lucide-react
 import { useAppStore } from '@/store/useAppStore';
 import { getNodeById } from '@/data/nodes';
 import { cn } from '@/lib/utils';
-
-// 分类中文映射
-const categoryLabels: Record<string, string> = {
-  ancient: '古希腊哲学',
-  rationalism: '理性主义',
-  empiricism: '经验主义',
-  german: '德国古典哲学',
-  modern: '现代哲学',
-};
+import { getCategoryLabel } from '@/utils/colors';
 
 export default function ConceptModal() {
   const selectedNodeId = useAppStore((s) => s.selectedNodeId);
@@ -109,7 +101,7 @@ export default function ConceptModal() {
                       }}
                     >
                       <Tag size={12} />
-                      {categoryLabels[node.category] || node.category}
+                      {getCategoryLabel(node.category)}
                     </motion.div>
 
                     {/* 节点名称 */}

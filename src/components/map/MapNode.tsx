@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import type { PhilosophyNode } from '@/types';
+import { getCategoryColor } from '@/utils/colors';
 
 interface MapNodeProps {
   node: PhilosophyNode;
@@ -26,7 +27,9 @@ export default function MapNode({
   const cx = node.x * virtualWidth;
   const cy = node.y * virtualHeight;
 
-  const baseColor = isUnlocked ? node.color : '#6b7280';
+  // 使用统一的分类颜色，确保与图例完全对应
+  const categoryColor = getCategoryColor(node.category);
+  const baseColor = isUnlocked ? categoryColor : '#6b7280';
   const glowColor = isUnlocked ? GOLD_COLOR : 'transparent';
 
   return (

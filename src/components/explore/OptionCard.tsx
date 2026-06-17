@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
+import { getCategoryColor } from '@/utils/colors';
 import type { QuestionOption } from '@/types';
 import { getNodeById } from '@/data/nodes';
 import { tagLabelMap } from './tagLabels';
@@ -126,14 +127,14 @@ export default function OptionCard({
                 key={node!.id}
                 className="inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs"
                 style={{
-                  backgroundColor: `${node!.color}20`,
-                  border: `1px solid ${node!.color}50`,
-                  color: node!.color,
+                  backgroundColor: `${getCategoryColor(node!.category)}20`,
+                  border: `1px solid ${getCategoryColor(node!.category)}50`,
+                  color: getCategoryColor(node!.category),
                 }}
               >
                 <span
                   className="h-1.5 w-1.5 rounded-full"
-                  style={{ backgroundColor: node!.color }}
+                  style={{ backgroundColor: getCategoryColor(node!.category) }}
                 />
                 {node!.name}
               </span>

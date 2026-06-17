@@ -105,6 +105,7 @@ export default function Home() {
 import { useNavigate } from 'react-router-dom';
 import { Play, RefreshCw } from 'lucide-react';
 import { philosophyNodes } from '@/data/nodes';
+import { getCategoryColor } from '@/utils/colors';
 
 function MobileRouteSummary() {
   const navigate = useNavigate();
@@ -133,15 +134,15 @@ function MobileRouteSummary() {
               key={node!.id}
               className="flex items-center gap-1.5 px-2 py-1 rounded-full text-xs"
               style={{
-                background: `${node!.color}15`,
-                border: `1px solid ${node!.color}40`,
+                background: `${getCategoryColor(node!.category)}15`,
+                border: `1px solid ${getCategoryColor(node!.category)}40`,
               }}
             >
               <span
                 className="w-2 h-2 rounded-full"
-                style={{ backgroundColor: node!.color }}
+                style={{ backgroundColor: getCategoryColor(node!.category) }}
               />
-              <span style={{ color: node!.color }}>{node!.name}</span>
+              <span style={{ color: getCategoryColor(node!.category) }}>{node!.name}</span>
             </div>
           ))}
         </div>

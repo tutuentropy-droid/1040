@@ -3,6 +3,7 @@ import { Play, RefreshCw, MapPin, Compass } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAppStore } from '@/store/useAppStore';
 import { philosophyNodes } from '@/data/nodes';
+import { getCategoryColor } from '@/utils/colors';
 import { cn } from '@/lib/utils';
 
 // 标签颜色配置
@@ -142,8 +143,8 @@ export default function RoutePanel() {
                     <div
                       className="flex-shrink-0 w-3 h-3 rounded-full"
                       style={{
-                        backgroundColor: node!.color,
-                        boxShadow: `0 0 8px ${node!.color}80`,
+                        backgroundColor: getCategoryColor(node!.category),
+                        boxShadow: `0 0 8px ${getCategoryColor(node!.category)}80`,
                       }}
                     />
                     {/* 节点名称 */}

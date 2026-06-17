@@ -1,4 +1,5 @@
 import { motion, AnimatePresence } from 'framer-motion';
+import { getCategoryColor } from '@/utils/colors';
 import type { PhilosophyNode } from '@/types';
 
 const GOLD_COLOR = '#c9a962';
@@ -28,8 +29,8 @@ export default function SelectedNodePanel({ node, onClose }: SelectedNodePanelPr
               <div
                 className="h-4 w-4 rounded-full shadow-lg"
                 style={{
-                  backgroundColor: node.color,
-                  boxShadow: `0 0 12px ${node.color}80`,
+                  backgroundColor: getCategoryColor(node.category),
+                  boxShadow: `0 0 12px ${getCategoryColor(node.category)}80`,
                 }}
               />
               <h2 className="text-xl font-bold" style={{ color: GOLD_COLOR }}>

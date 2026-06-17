@@ -1,4 +1,5 @@
 import { motion, AnimatePresence } from 'framer-motion';
+import { getCategoryColor } from '@/utils/colors';
 import type { PhilosophyNode } from '@/types';
 
 const GOLD_COLOR = '#c9a962';
@@ -29,7 +30,7 @@ export default function MapTooltip({ hoveredNode, tooltipPos }: MapTooltipProps)
           <div className="mb-2 flex items-center gap-2">
             <div
               className="h-3 w-3 rounded-full"
-              style={{ backgroundColor: hoveredNode.color }}
+              style={{ backgroundColor: getCategoryColor(hoveredNode.category) }}
             />
             <h3 className="text-lg font-bold" style={{ color: GOLD_COLOR }}>
               {hoveredNode.name}

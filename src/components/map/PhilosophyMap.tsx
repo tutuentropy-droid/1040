@@ -4,20 +4,11 @@ import { useAppStore } from '@/store/useAppStore';
 import { philosophyNodes, getNodeById } from '@/data/nodes';
 import { philosophyEdges } from '@/data/edges';
 import MapNode from '@/components/map/MapNode';
+import { getCategoryLegend, getEdgeColor, getCategoryColor } from '@/utils/colors';
 import type { PhilosophyNode } from '@/types';
 
-// 分类标签配置
-const categoryLabels: Array<{
-  key: string;
-  label: string;
-  color: string;
-}> = [
-  { key: 'ancient', label: '古希腊', color: '#E67E22' },
-  { key: 'rationalism', label: '理性主义', color: '#3498DB' },
-  { key: 'empiricism', label: '经验主义', color: '#27AE60' },
-  { key: 'german', label: '德国古典', color: '#9B59B6' },
-  { key: 'modern', label: '现代哲学', color: '#C0392B' },
-];
+// 分类标签配置 - 从统一颜色工具获取，确保与实际节点颜色完全一致
+const categoryLabels = getCategoryLegend();
 
 const GOLD_COLOR = '#c9a962';
 
@@ -68,7 +59,9 @@ export default function PhilosophyMap() {
       const anyUnlocked = sourceUnlocked || targetUnlocked;
       const bothUnlocked = sourceUnlocked && targetUnlocked;
 
-      const opacity = bothUnlocked ? 0.6 : anyUnlocked ? 0.25 : 0.08;
+      // 使用统一的边颜色映射
+      const edgeBaseColor = getEdgeColor(edge.relation);
+      const opacity = bothUnlocked ? 0.7 : anyUnlocked ? 0.3 : 0.1;
       const isHighlighted =
         (selectedNodeId === source.id || selectedNodeId === target.id) && bothUnlocked;
 
@@ -82,9 +75,9 @@ export default function PhilosophyMap() {
           <motion.path
             d={path}
             fill="none"
-            stroke={isHighlighted ? GOLD_COLOR : '#c9a962'}
-            strokeWidth={isHighlighted ? 3 : 1.5}
-            strokeOpacity={isHighlighted ? 0.9 : opacity}
+            stroke={isHighlighted ? GOLD_COLOR : edgeBaseColor}
+            strokeWidth={isHighlighted ? 3 : 1.8}
+            strokeOpacity={isHighlighted ? 0.95 : opacity}
             strokeDasharray={bothUnlocked ? 'none' : '4 4'}
             initial={{ pathLength: 0, opacity: 0 }}
             animate={{ pathLength: 1, opacity: 1 }}
@@ -158,10 +151,13 @@ export default function PhilosophyMap() {
         {categoryLabels.map((cat) => (
           <div key={cat.key} className="flex items-center gap-2 px-2 py-0.5">
             <span
-              className="w-2.5 h-2.5 rounded-full"
-              style={{ backgroundColor: cat.color }}
+              className="w-2.5 h-2.5 rounded-full shadow-[0_0_6px_rgba(0,0,0,0.3)]"
+              style={{
+                backgroundColor: cat.color,
+                boxShadow: `0 0 8px ${cat.color}50`,
+              }}
             />
-            <span className="text-[11px] text-[#e8e4d9]/70">{cat.label}</span>
+            <span className="text-[11px] text-[#e8e4d9]/75">{cat.label}</span>
           </div>
         ))}
       </div>
@@ -239,9 +235,9 @@ export default function PhilosophyMap() {
               <div
                 className="flex-shrink-0 w-10 h-10 rounded-lg flex items-center justify-center text-sm font-bold"
                 style={{
-                  backgroundColor: `${hoveredNode.color}25`,
-                  border: `1px solid ${hoveredNode.color}50`,
-                  color: hoveredNode.color,
+                  backgroundColor: `${getCategoryColor(hoveredNode.category)}25`,
+                  border: `1px solid ${getCategoryColor(hoveredNode.category)}50`,
+                  color: getCategoryColor(hoveredNode.category),
                 }}
               >
                 {hoveredNode.name.charAt(0)}
