@@ -1,12 +1,16 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { AnimatePresence } from 'framer-motion';
 import NavHeader from '@/components/common/NavHeader';
 import RoutePanel from '@/components/common/RoutePanel';
 import ConceptModal from '@/components/common/ConceptModal';
 import PhilosophyMap from '@/components/map/PhilosophyMap';
+import PhilosopherEncounter from '@/components/philosopher/PhilosopherEncounter';
+import PhilosopherProfilePanel from '@/components/philosopher/PhilosopherProfilePanel';
 import { useAppStore } from '@/store/useAppStore';
 
 export default function Home() {
   const hydrate = useAppStore((s) => s.hydrate);
+  const [showProfiles, setShowProfiles] = useState(false);
 
   // 初始化时从本地存储恢复数据
   useEffect(() => {
@@ -61,7 +65,7 @@ export default function Home() {
       />
 
       {/* 顶部导航 */}
-      <NavHeader />
+      <NavHeader onOpenProfiles={() => setShowProfiles(true)} />
 
       {/* 主内容区 */}
       <main className="relative z-10 pt-24 md:pt-28 pb-6 md:pb-8 px-4 md:px-6 min-h-screen">
@@ -97,6 +101,16 @@ export default function Home() {
 
       {/* 概念详情弹窗 */}
       <ConceptModal />
+
+      {/* 哲学家遭遇弹窗 */}
+      <PhilosopherEncounter />
+
+      {/* 人物档案面板 */}
+      <AnimatePresence>
+        {showProfiles && (
+          <PhilosopherProfilePanel onClose={() => setShowProfiles(false)} />
+        )}
+      </AnimatePresence>
     </div>
   );
 }

@@ -1,8 +1,9 @@
 import { motion } from 'framer-motion';
-import { Map, Compass, BookOpen, Lock, Unlock } from 'lucide-react';
+import { Map, Compass, BookOpen, Lock, Unlock, Users } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAppStore } from '@/store/useAppStore';
 import { philosophyNodes } from '@/data/nodes';
+import { philosopherNPCs } from '@/data/philosophers';
 import { cn } from '@/lib/utils';
 
 // 导航栏按钮配置
@@ -12,10 +13,15 @@ const navItems = [
   { key: 'record', label: '探索记录', icon: BookOpen, path: '/record' },
 ];
 
-export default function NavHeader() {
+interface NavHeaderProps {
+  onOpenProfiles?: () => void;
+}
+
+export default function NavHeader({ onOpenProfiles }: NavHeaderProps) {
   const navigate = useNavigate();
   const location = useLocation();
   const unlockedNodes = useAppStore((s) => s.unlockedNodes);
+  const completedChallenges = useAppStore((s) => s.completedChallenges);
 
   // 总节点数
   const totalNodes = philosophyNodes.length;
@@ -150,6 +156,64 @@ export default function NavHeader() {
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.3 }}
         >
+          {/* 人物档案按钮 */}
+          {onOpenProfiles && (
+            <>
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={onOpenProfiles}
+                className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg transition-all"
+                style={{
+                  background: completedChallenges.length > 0
+                    ? 'linear-gradient(135deg, rgba(155,89,182,0.12), rgba(155,89,182,0.04))'
+                    : 'rgba(255,255,255,0.04)',
+                  border: completedChallenges.length > 0
+                    ? '1px solid rgba(155,89,182,0.3)'
+                    : '1px solid rgba(255,255,255,0.08)',
+                }}
+                title="人物档案"
+              >
+                <Users
+                  size={14}
+                  className={completedChallenges.length > 0 ? 'text-purple-400' : 'text-[#e8e4d9]/50'}
+                />
+                <span className="text-sm font-medium"
+                  style={{
+                    color: completedChallenges.length > 0 ? '#c4a4e6' : '#e8e4d9]',
+                  }}>
+                  <span style={{
+                    color: completedChallenges.length > 0 ? '#9B59B6' : '#c9a962',
+                    fontWeight: 700,
+                  }}>{completedChallenges.length}</span>
+                  <span className="opacity-50 mx-0.5">/</span>
+                  <span className="opacity-70">{philosopherNPCs.length}</span>
+                </span>
+              </motion.button>
+
+              {/* 移动端人物档案按钮 */}
+              <motion.button
+                whileTap={{ scale: 0.9 }}
+                onClick={onOpenProfiles}
+                className="sm:hidden w-9 h-9 rounded-lg flex items-center justify-center transition-all"
+                style={{
+                  background: completedChallenges.length > 0
+                    ? 'rgba(155,89,182,0.1)'
+                    : 'rgba(255,255,255,0.04)',
+                  border: completedChallenges.length > 0
+                    ? '1px solid rgba(155,89,182,0.3)'
+                    : '1px solid rgba(255,255,255,0.08)',
+                }}
+                title="人物档案"
+              >
+                <Users
+                  size={18}
+                  className={completedChallenges.length > 0 ? 'text-purple-400' : 'text-[#e8e4d9]/60'}
+                />
+              </motion.button>
+            </>
+          )}
+
           {/* 移动端导航按钮 */}
           <div className="md:hidden flex items-center gap-1">
             {navItems.map((item) => {

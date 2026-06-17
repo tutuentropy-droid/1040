@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import type { AppState, ExplorationRecord, Question } from '@/types';
+import type { AppState, ExplorationRecord, PhilosopherProfile, Question } from '@/types';
 import {
   loadAppState,
   saveAppState,
@@ -11,22 +11,13 @@ import { philosophyNodes } from '@/data/nodes';
 import { questions, getQuestionById, getFirstQuestion } from '@/data/questions';
 
 interface AppStore extends AppState {
-  // 选中的节点 ID（用于弹窗）
   selectedNodeId: string | null;
-
-  // 缩放级别
   zoomLevel: number;
-
-  // 地图偏移
   mapOffset: { x: number; y: number };
-
-  // 探索开始时间
   explorationStartTime: number | null;
+  activePhilosopherId: string | null;
 
-  // 设置选中节点
   setSelectedNodeId: (nodeId: string | null) => void;
-
-  // 选择选项
   selectOption: (
     questionId: string,
     optionId: string,
@@ -34,34 +25,21 @@ interface AppStore extends AppState {
     unlockNodes?: string[],
     routeTags?: Record<string, number>,
   ) => void;
-
-  // 设置当前视图
   setCurrentView: (view: AppState['currentView']) => void;
-
-  // 选择节点
   selectNode: (nodeId: string | null) => void;
-
-  // 设置缩放级别（别名）
   setZoomLevel: (level: number) => void;
-
-  // 重置当前探索
   resetExploration: () => void;
-
-  // 完成探索并保存记录
   finishExploration: () => void;
-
-  // 删除记录
   removeRecord: (recordId: string) => void;
-
-  // 从存储中恢复数据
   hydrate: () => void;
-
-  // 缩放方法
   zoomIn: () => void;
   zoomOut: () => void;
   setZoom: (level: number) => void;
   resetView: () => void;
   setMapOffset: (offset: { x: number; y: number }) => void;
+  encounterPhilosopher: (philosopherId: string) => void;
+  completeChallenge: (philosopherId: string, rewardNodes: string[]) => void;
+  setActivePhilosopher: (philosopherId: string | null) => void;
 }
 
 const initialState: AppState = {
@@ -74,6 +52,8 @@ const initialState: AppState = {
   routeTags: {},
   explorationPath: [],
   records: [],
+  encounteredPhilosophers: [],
+  completedChallenges: [],
 };
 
 export const useAppStore = create<AppStore>((set, get) => ({
@@ -82,6 +62,7 @@ export const useAppStore = create<AppStore>((set, get) => ({
   zoomLevel: 1,
   mapOffset: { x: 0, y: 0 },
   explorationStartTime: null,
+  activePhilosopherId: null,
 
   setSelectedNodeId: (nodeId) => {
     set({ selectedNodeId: nodeId });
@@ -227,6 +208,51 @@ export const useAppStore = create<AppStore>((set, get) => ({
 
   setMapOffset: (offset) => {
     set({ mapOffset: offset });
+  },
+
+  encounterPhilosopher: (philosopherId) => {
+    const state = get();
+    const alreadyEncountered = state.encounteredPhilosophers.find(
+      (p) => p.philosopherId === philosopherId,
+    );
+    if (alreadyEncountered) {
+      set({ activePhilosopherId: philosopherId });
+      return;
+    }
+    const newProfile: PhilosopherProfile = {
+      philosopherId,
+      encounteredAt: Date.now(),
+    };
+    const newState = {
+      encounteredPhilosophers: [...state.encounteredPhilosophers, newProfile],
+      activePhilosopherId: philosopherId,
+    };
+    set(newState);
+    saveAppState({ ...state, ...newState });
+  },
+
+  completeChallenge: (philosopherId, rewardNodes) => {
+    const state = get();
+    const newUnlockedNodes = Array.from(
+      new Set([...state.unlockedNodes, ...rewardNodes]),
+    );
+    const updatedProfiles = state.encounteredPhilosophers.map((p) =>
+      p.philosopherId === philosopherId
+        ? { ...p, challengeCompletedAt: Date.now() }
+        : p,
+    );
+    const newState = {
+      unlockedNodes: newUnlockedNodes,
+      encounteredPhilosophers: updatedProfiles,
+      completedChallenges: [...state.completedChallenges, philosopherId],
+      activePhilosopherId: null,
+    };
+    set(newState);
+    saveAppState({ ...state, ...newState });
+  },
+
+  setActivePhilosopher: (philosopherId) => {
+    set({ activePhilosopherId: philosopherId });
   },
 }));
 

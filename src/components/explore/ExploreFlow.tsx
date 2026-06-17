@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowRight, RefreshCw, Home, Sparkles, CheckCircle2 } from 'lucide-react';
+import { ArrowRight, RefreshCw, Home, Sparkles, CheckCircle2, User } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAppStore } from '@/store/useAppStore';
 import QuestionCard from '@/components/explore/QuestionCard';
 import { getQuestionById } from '@/data/questions';
+import { getRandomPhilosopher } from '@/data/philosophers';
 import { cn } from '@/lib/utils';
 
 // 背景粒子
@@ -26,6 +27,9 @@ export default function ExploreFlow() {
   const resetExploration = useAppStore((s) => s.resetExploration);
   const unlockedNodes = useAppStore((s) => s.unlockedNodes);
   const routeTags = useAppStore((s) => s.routeTags);
+  const encounteredPhilosophers = useAppStore((s) => s.encounteredPhilosophers);
+  const completedChallenges = useAppStore((s) => s.completedChallenges);
+  const encounterPhilosopher = useAppStore((s) => s.encounterPhilosopher);
 
   const [selectedOptionId, setSelectedOptionId] = useState<string | null>(null);
   const [showFeedback, setShowFeedback] = useState(false);
@@ -35,6 +39,19 @@ export default function ExploreFlow() {
   const currentQuestion = currentQuestionId
     ? getQuestionById(currentQuestionId)
     : null;
+
+  const maybeEncounterPhilosopher = () => {
+    const encounterChance = 0.35;
+    if (Math.random() < encounterChance) {
+      const excludeIds = completedChallenges;
+      const philosopher = getRandomPhilosopher(excludeIds);
+      if (philosopher) {
+        encounterPhilosopher(philosopher.id);
+        return true;
+      }
+    }
+    return false;
+  };
 
   // 检测是否完成探索
   useEffect(() => {
@@ -78,6 +95,8 @@ export default function ExploreFlow() {
 
     if (!option.nextQuestionId) {
       setIsCompleted(true);
+    } else {
+      maybeEncounterPhilosopher();
     }
   };
 
@@ -173,7 +192,7 @@ export default function ExploreFlow() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.6 }}
-                className="grid grid-cols-2 gap-4 mb-8"
+                className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8"
               >
                 <div
                   className="p-5 rounded-2xl text-center"
@@ -207,6 +226,40 @@ export default function ExploreFlow() {
                   </div>
                   <div className="text-xs text-[#e8e4d9]/60 tracking-wider">
                     回答问题
+                  </div>
+                </div>
+                <div
+                  className="p-5 rounded-2xl text-center"
+                  style={{
+                    background: 'rgba(155,89,182,0.08)',
+                    border: '1px solid rgba(155,89,182,0.25)',
+                  }}
+                >
+                  <div
+                    className="text-4xl font-bold text-purple-400 mb-1"
+                    style={{ fontFamily: '"Noto Serif SC", Georgia, serif' }}
+                  >
+                    {encounteredPhilosophers.length}
+                  </div>
+                  <div className="text-xs text-[#e8e4d9]/60 tracking-wider">
+                    遭遇哲人
+                  </div>
+                </div>
+                <div
+                  className="p-5 rounded-2xl text-center"
+                  style={{
+                    background: 'rgba(39,174,96,0.08)',
+                    border: '1px solid rgba(39,174,96,0.25)',
+                  }}
+                >
+                  <div
+                    className="text-4xl font-bold text-green-400 mb-1"
+                    style={{ fontFamily: '"Noto Serif SC", Georgia, serif' }}
+                  >
+                    {completedChallenges.length}
+                  </div>
+                  <div className="text-xs text-[#e8e4d9]/60 tracking-wider">
+                    完成挑战
                   </div>
                 </div>
               </motion.div>
@@ -334,7 +387,15 @@ export default function ExploreFlow() {
             />
           </div>
 
-          <span className="text-xs text-[#e8e4d9]/50">8 问</span>
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-1.5" title="已遭遇哲人">
+              <User size={12} className="text-purple-400" />
+              <span className="text-xs text-purple-400 font-medium">
+                {encounteredPhilosophers.length}
+              </span>
+            </div>
+            <span className="text-xs text-[#e8e4d9]/50">8 问</span>
+          </div>
         </motion.div>
 
         {/* 问题卡片 */}

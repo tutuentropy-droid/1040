@@ -70,14 +70,47 @@ export interface ExplorationRecord {
 }
 
 // 视图类型
-export type View =
-  | 'home' // 首页
-  | 'questionnaire' // 问卷探索
-  | 'graph' // 知识图谱
-  | 'history' // 历史记录
-  | 'nodeDetail'; // 节点详情
+export interface PhilosopherChallengeOption {
+  id: string;
+  text: string;
+  isCorrect: boolean;
+  feedback: string;
+}
 
-// 应用全局状态
+export interface PhilosopherChallenge {
+  id: string;
+  question: string;
+  hint: string;
+  options: PhilosopherChallengeOption[];
+}
+
+export interface PhilosopherNPC {
+  id: string;
+  name: string;
+  title: string;
+  era: string;
+  category: PhilosophyCategory;
+  portrait: string;
+  quote: string;
+  thoughtProfile: string[];
+  classicViewpoints: string[];
+  challenge: PhilosopherChallenge;
+  rewardNodes: string[];
+}
+
+export interface PhilosopherProfile {
+  philosopherId: string;
+  encounteredAt: number;
+  challengeCompletedAt?: number;
+}
+
+export type View =
+  | 'home'
+  | 'questionnaire'
+  | 'graph'
+  | 'history'
+  | 'nodeDetail';
+
 export interface AppState {
   currentView: View;
   currentQuestionId: string | null;
@@ -88,4 +121,6 @@ export interface AppState {
   routeTags: Record<string, number>;
   explorationPath: string[];
   records: ExplorationRecord[];
+  encounteredPhilosophers: PhilosopherProfile[];
+  completedChallenges: string[];
 }

@@ -1,10 +1,14 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { AnimatePresence } from 'framer-motion';
 import NavHeader from '@/components/common/NavHeader';
 import ExploreFlow from '@/components/explore/ExploreFlow';
+import PhilosopherEncounter from '@/components/philosopher/PhilosopherEncounter';
+import PhilosopherProfilePanel from '@/components/philosopher/PhilosopherProfilePanel';
 import { useAppStore } from '@/store/useAppStore';
 
 export default function Explore() {
   const hydrate = useAppStore((s) => s.hydrate);
+  const [showProfiles, setShowProfiles] = useState(false);
 
   // 初始化时从本地存储恢复数据
   useEffect(() => {
@@ -39,12 +43,22 @@ export default function Explore() {
       />
 
       {/* 顶部导航 */}
-      <NavHeader />
+      <NavHeader onOpenProfiles={() => setShowProfiles(true)} />
 
       {/* 主内容区 */}
       <main className="relative z-10">
         <ExploreFlow />
       </main>
+
+      {/* 哲学家遭遇弹窗 */}
+      <PhilosopherEncounter />
+
+      {/* 人物档案面板 */}
+      <AnimatePresence>
+        {showProfiles && (
+          <PhilosopherProfilePanel onClose={() => setShowProfiles(false)} />
+        )}
+      </AnimatePresence>
     </div>
   );
 }
