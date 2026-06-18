@@ -2,11 +2,12 @@ import { useState, useMemo, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Info, Filter, Users, ArrowRight, Circle } from 'lucide-react';
 import { useAppStore } from '@/store/useAppStore';
-import { philosophyNodes, getNodeById } from '@/data/nodes';
+import { getNodeById } from '@/data/nodes';
 import {
-  philosopherRelations,
+  getPersonToPersonRelations,
   getRelationColor,
   getRelationDescription,
+  getPersonNodes,
 } from '@/data/philosopherRelations';
 import { getCategoryColor, getCategoryLabel } from '@/utils/colors';
 import type { PhilosopherRelation, PhilosopherRelationType, PhilosophyNode } from '@/types';
@@ -22,15 +23,19 @@ const RELATION_TYPES: PhilosopherRelationType[] = [
   '融合',
 ];
 
-// 为图谱计算节点布局位置
+// 为图谱计算节点布局位置（仅人物哲学家节点）
 const computeGraphLayout = () => {
   const positions: Record<string, { x: number; y: number }> = {};
+  const personRelations = getPersonToPersonRelations();
+  const personNodes = getPersonNodes();
   const involvedNodes = new Set<string>();
 
-  philosopherRelations.forEach((r) => {
+  personRelations.forEach((r) => {
     involvedNodes.add(r.source);
     involvedNodes.add(r.target);
   });
+  // 确保所有人物节点都被包含（即使暂时没有关系）
+  personNodes.forEach((n) => involvedNodes.add(n.id));
 
   // 按分类分组
   const groups: Record<string, string[]> = {
@@ -109,20 +114,17 @@ export default function PhilosopherRelationGraph() {
   const virtualWidth = 1200;
   const virtualHeight = 900;
 
-  // 过滤后的关系
+  // 过滤后的关系（仅人物-人物之间的关系）
   const filteredRelations = useMemo(() => {
-    return philosopherRelations.filter((r) => activeFilters.has(r.type));
+    return getPersonToPersonRelations().filter((r) => activeFilters.has(r.type));
   }, [activeFilters]);
 
-  // 获取相关的节点
+  // 获取相关的节点（所有人物节点，不仅限于有过滤后关系的）
   const involvedNodeIds = useMemo(() => {
     const ids = new Set<string>();
-    filteredRelations.forEach((r) => {
-      ids.add(r.source);
-      ids.add(r.target);
-    });
+    getPersonNodes().forEach((n) => ids.add(n.id));
     return ids;
-  }, [filteredRelations]);
+  }, []);
 
   const selectedNode = selectedNodeId ? getNodeById(selectedNodeId) : null;
 

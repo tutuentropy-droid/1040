@@ -1,4 +1,32 @@
 import type { PhilosopherRelation, PhilosopherRelationType } from '../types';
+import { philosophyNodes } from './nodes';
+
+// 人物哲学家节点 ID（排除学派、主义、概念等非人物节点）
+export const PERSON_NODE_IDS = [
+  'socrates',      // 苏格拉底
+  'plato',         // 柏拉图
+  'aristotle',     // 亚里士多德
+  'descartes',     // 笛卡尔
+  'spinoza',       // 斯宾诺莎
+  'leibniz',       // 莱布尼茨
+  'locke',         // 洛克
+  'berkeley',      // 贝克莱
+  'hume',          // 休谟
+  'kant',          // 康德
+  'hegel',         // 黑格尔
+  'schopenhauer',  // 叔本华
+  'nietzsche',     // 尼采
+];
+
+// 判断是否为人物节点
+export const isPersonNode = (nodeId: string): boolean => {
+  return PERSON_NODE_IDS.includes(nodeId);
+};
+
+// 获取所有人物节点
+export const getPersonNodes = () => {
+  return philosophyNodes.filter((node) => PERSON_NODE_IDS.includes(node.id));
+};
 
 export const philosopherRelations: PhilosopherRelation[] = [
   // ==================== 古希腊哲学家关系 ====================
@@ -203,16 +231,16 @@ export const philosopherRelations: PhilosopherRelation[] = [
   },
 ];
 
-// 获取关系类型的颜色
+// 获取关系类型的颜色（7种颜色在色轮上均匀分布，确保视觉差异明显）
 export const getRelationColor = (type: PhilosopherRelationType): string => {
   const colors: Record<PhilosopherRelationType, string> = {
-    '师承': '#27AE60',   // 绿色 - 正面传承
-    '继承': '#2ECC71',   // 浅绿 - 思想继承
-    '批判': '#E74C3C',   // 红色 - 批判反对
-    '发展': '#3498DB',   // 蓝色 - 创新发展
-    '影响': '#9B59B6',   // 紫色 - 重要影响
-    '对立': '#E67E22',   // 橙色 - 思想对立
-    '融合': '#1ABC9C',   // 青色 - 思想融合
+    '师承': '#27AE60',   // 翠绿色 - 师徒传承，生命延续
+    '继承': '#3498DB',   // 天蓝色 - 思想继承，河流延伸
+    '批判': '#E74C3C',   // 正红色 - 批判反对，鲜明冲突
+    '发展': '#9B59B6',   // 紫罗兰 - 创新发展，神秘超越
+    '影响': '#F1C40F',   // 金黄色 - 启发影响，光芒四射
+    '对立': '#E67E22',   // 橙红色 - 思想对立，张力强烈
+    '融合': '#1ABC9C',   // 青蓝色 - 融会贯通，江海交汇
   };
   return colors[type] || '#c9a962';
 };
@@ -244,3 +272,10 @@ export const getAllRelationsForPhilosopher = (philosopherId: string) =>
   philosopherRelations.filter(
     (r) => r.source === philosopherId || r.target === philosopherId,
   );
+
+// 获取所有哲学家人物之间的关系（排除学派、主义等非人物节点）
+export const getPersonToPersonRelations = (): PhilosopherRelation[] => {
+  return philosopherRelations.filter(
+    (r) => isPersonNode(r.source) && isPersonNode(r.target),
+  );
+};
