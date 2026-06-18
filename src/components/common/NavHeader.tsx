@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { Map, Compass, BookOpen, Lock, Unlock, Users, Clock, GitBranch, TrendingUp, FlaskConical, Swords } from 'lucide-react';
+import { Map, Compass, BookOpen, Lock, Unlock, Users, Clock, GitBranch, TrendingUp, FlaskConical, Swords, Biohazard } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAppStore } from '@/store/useAppStore';
 import { philosophyNodes } from '@/data/nodes';
@@ -12,6 +12,7 @@ const navItems = [
   { key: 'relation', label: '哲人关系', icon: GitBranch, path: '/relation' },
   { key: 'timeline', label: '思想长河', icon: Clock, path: '/timeline' },
   { key: 'experiment', label: '思想实验', icon: FlaskConical, path: '/experiment' },
+  { key: 'virus', label: '哲学病毒', icon: Biohazard, path: '/virus' },
   { key: 'debate', label: '辩论竞技', icon: Swords, path: '/debate' },
   { key: 'explore', label: '开始探索', icon: Compass, path: '/explore' },
   { key: 'growth', label: '成长路径', icon: TrendingUp, path: '/growth' },

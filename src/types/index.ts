@@ -233,3 +233,62 @@ export interface AppState {
   completedExperiments: string[];
   experimentRouteTags: Record<string, number>;
 }
+
+// ==================== 哲学病毒系统 ====================
+
+// 观念病毒：一种会传播的思想，依附于某个哲学节点
+export interface ThoughtVirus {
+  id: string;
+  name: string;
+  category: PhilosophyCategory;
+  infectivity: number; // 1-10 传染力基数
+  tagline: string; // 一句话特征
+  color: string;
+  nodeId?: string; // 关联的哲学节点 id
+}
+
+// 虚拟社会人群：对各类思想的接受概率不同
+export interface VirusPopulation {
+  id: string;
+  name: string;
+  icon: string;
+  description: string;
+  susceptibility: Record<PhilosophyCategory, number>; // 对各类思想的接受概率 0-1
+  connections: string[]; // 相连的人群 id（用于扩散）
+  x: number; // 网络布局坐标 0-1
+  y: number;
+}
+
+// 混合学派：两种观念病毒在人群中相遇后诞生的新学派
+export interface HybridSchool {
+  id: string;
+  name: string;
+  description: string;
+  color: string;
+  virusIds: [string, string]; // 触发的两种病毒
+}
+
+// 单个人群的运行时感染状态
+export interface VirusPopState {
+  id: string;
+  infections: Record<string, number>; // virusId -> 感染强度 0-100
+  hybrids: string[]; // 该人群已诞生的混合学派 id
+}
+
+// 事件日志条目
+export interface VirusLogEntry {
+  id: string;
+  tick: number;
+  text: string;
+  type: 'spread' | 'hybrid' | 'info';
+}
+
+// 哲学病毒模拟的整体状态
+export interface VirusSimState {
+  populations: Record<string, VirusPopState>;
+  tick: number;
+  isRunning: boolean;
+  speed: number; // 每步间隔毫秒
+  discoveredHybrids: string[];
+  log: VirusLogEntry[];
+}

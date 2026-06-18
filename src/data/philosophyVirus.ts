@@ -1,0 +1,223 @@
+import type { ThoughtVirus, VirusPopulation, HybridSchool } from '@/types';
+
+// 观念病毒：每一种思想都是一种会扩散的观念病毒
+// 颜色取自对应哲学节点，传染力反映其在历史中"感染"人群的真实强度
+export const thoughtViruses: ThoughtVirus[] = [
+  {
+    id: 'v_socrates',
+    name: '认识你自己',
+    category: 'ancient',
+    infectivity: 6,
+    tagline: '助产术式追问，唤醒无知之知',
+    color: '#E67E22',
+    nodeId: 'socrates',
+  },
+  {
+    id: 'v_stoicism',
+    name: '斯多葛',
+    category: 'ancient',
+    infectivity: 8,
+    tagline: '控制二分法，贴近日常，极易在民间扎根',
+    color: '#873600',
+    nodeId: 'stoicism',
+  },
+  {
+    id: 'v_descartes',
+    name: '我思故我在',
+    category: 'rationalism',
+    infectivity: 6,
+    tagline: '普遍怀疑与理性演绎的阿基米德点',
+    color: '#3498DB',
+    nodeId: 'descartes',
+  },
+  {
+    id: 'v_hume',
+    name: '因果怀疑',
+    category: 'empiricism',
+    infectivity: 5,
+    tagline: '习惯即人生指南，悄然瓦解必然性',
+    color: '#1E8449',
+    nodeId: 'hume',
+  },
+  {
+    id: 'v_kant',
+    name: '绝对命令',
+    category: 'german',
+    infectivity: 4,
+    tagline: '艰深肃穆，门槛高却根基稳固',
+    color: '#9B59B6',
+    nodeId: 'kant',
+  },
+  {
+    id: 'v_hegel',
+    name: '辩证法',
+    category: 'german',
+    infectivity: 7,
+    tagline: '正反合的螺旋上升，体系磅礴',
+    color: '#8E44AD',
+    nodeId: 'hegel',
+  },
+  {
+    id: 'v_nietzsche',
+    name: '上帝死了',
+    category: 'modern',
+    infectivity: 9,
+    tagline: '重估一切价值，极具煽动与颠覆性',
+    color: '#C0392B',
+    nodeId: 'nietzsche',
+  },
+  {
+    id: 'v_utilitarianism',
+    name: '最大幸福',
+    category: 'modern',
+    infectivity: 8,
+    tagline: '可量化的快乐，直击大众诉求',
+    color: '#16A085',
+    nodeId: 'utilitarianism',
+  },
+  {
+    id: 'v_marxism',
+    name: '阶级斗争',
+    category: 'modern',
+    infectivity: 9,
+    tagline: '号召被压迫者改变世界，烈性极强',
+    color: '#B7950B',
+    nodeId: 'marxism',
+  },
+];
+
+// 虚拟社会人群：不同阶层对各类思想的接受概率悬殊
+export const virusPopulations: VirusPopulation[] = [
+  {
+    id: 'scholars',
+    name: '学者院',
+    icon: '🎓',
+    description: '埋首书斋的哲人与门徒，理性与体系的拥趸。',
+    susceptibility: { ancient: 0.6, rationalism: 0.9, empiricism: 0.75, german: 0.85, modern: 0.55 },
+    connections: ['aristocracy', 'clergy', 'citizens'],
+    x: 0.5,
+    y: 0.16,
+  },
+  {
+    id: 'aristocracy',
+    name: '贵族宫廷',
+    icon: '👑',
+    description: '维系秩序的统治阶层，偏好古典与斯多葛式自制。',
+    susceptibility: { ancient: 0.8, rationalism: 0.35, empiricism: 0.3, german: 0.45, modern: 0.25 },
+    connections: ['scholars', 'citizens', 'clergy'],
+    x: 0.85,
+    y: 0.3,
+  },
+  {
+    id: 'citizens',
+    name: '市民阶层',
+    icon: '🏘️',
+    description: '新兴的商贾与市民，务实且渴望改善处境。',
+    susceptibility: { ancient: 0.3, rationalism: 0.3, empiricism: 0.55, german: 0.3, modern: 0.75 },
+    connections: ['aristocracy', 'artisans', 'scholars', 'peasants'],
+    x: 0.85,
+    y: 0.7,
+  },
+  {
+    id: 'artisans',
+    name: '工匠行会',
+    icon: '🔨',
+    description: '凭手艺与经验立身，崇尚可验证的实用之物。',
+    susceptibility: { ancient: 0.35, rationalism: 0.3, empiricism: 0.85, german: 0.25, modern: 0.6 },
+    connections: ['citizens', 'peasants', 'scholars'],
+    x: 0.5,
+    y: 0.88,
+  },
+  {
+    id: 'peasants',
+    name: '农民社群',
+    icon: '🌾',
+    description: '面朝土地的劳苦大众，渴求慰藉与解放。',
+    susceptibility: { ancient: 0.5, rationalism: 0.1, empiricism: 0.35, german: 0.2, modern: 0.45 },
+    connections: ['artisans', 'citizens', 'clergy'],
+    x: 0.15,
+    y: 0.7,
+  },
+  {
+    id: 'clergy',
+    name: '僧侣教团',
+    icon: '⛪',
+    description: '守护信仰与教义，警惕颠覆性的现代批判。',
+    susceptibility: { ancient: 0.55, rationalism: 0.4, empiricism: 0.3, german: 0.35, modern: 0.12 },
+    connections: ['peasants', 'scholars', 'aristocracy'],
+    x: 0.15,
+    y: 0.3,
+  },
+];
+
+// 混合学派配方：两种观念病毒在同一人群中均达到阈值后诞生
+export const hybridRecipes: HybridSchool[] = [
+  {
+    id: 'h_transcendental_empiricism',
+    name: '先验经验论',
+    description: '康德的先验框架吸收休谟的怀疑，承认经验的同时保留必然结构。',
+    color: '#6E7CB0',
+    virusIds: ['v_kant', 'v_hume'],
+  },
+  {
+    id: 'h_dialectical_materialism',
+    name: '辩证唯物主义',
+    description: '黑格尔的辩证法被唯物地倒置，历史在矛盾中螺旋推进。',
+    color: '#A0522D',
+    virusIds: ['v_hegel', 'v_marxism'],
+  },
+  {
+    id: 'h_critical_theory',
+    name: '激进批判理论',
+    description: '尼采的颠覆与马克思的解放汇流，指向对一切偶像的总体批判。',
+    color: '#D35400',
+    virusIds: ['v_nietzsche', 'v_marxism'],
+  },
+  {
+    id: 'h_stoic_utilitarianism',
+    name: '实用斯多葛主义',
+    description: '最大幸福原则与控制二分法结合，形成务实而自制的现世伦理。',
+    color: '#5D8AA8',
+    virusIds: ['v_stoicism', 'v_utilitarianism'],
+  },
+  {
+    id: 'h_methodological_skepticism',
+    name: '理性怀疑论',
+    description: '苏格拉底的追问嫁接笛卡尔的普遍怀疑，铸成方法论的怀疑之刃。',
+    color: '#9B6A00',
+    virusIds: ['v_socrates', 'v_descartes'],
+  },
+  {
+    id: 'h_value_critique',
+    name: '价值批判哲学',
+    description: '康德的批判界限遇上尼采的价值重估，审慎又锐利地拷问价值根基。',
+    color: '#A24AC0',
+    virusIds: ['v_kant', 'v_nietzsche'],
+  },
+  {
+    id: 'h_tragic_dialectic',
+    name: '悲剧辩证法',
+    description: '黑格尔的合题染上尼采的悲剧底色，承认矛盾中不可消除的撕裂。',
+    color: '#943A6B',
+    virusIds: ['v_hegel', 'v_nietzsche'],
+  },
+  {
+    id: 'h_empirical_utilitarianism',
+    name: '经验功利主义',
+    description: '休谟的经验心理学为功利计算奠基，快乐与因果一同被经验地度量。',
+    color: '#1ABC9C',
+    virusIds: ['v_hume', 'v_utilitarianism'],
+  },
+  {
+    id: 'h_liberation_asceticism',
+    name: '革命禁欲主义',
+    description: '马克思的解放诉求与斯多葛的自制结盟，以清贫意志锻造革命主体。',
+    color: '#7D6608',
+    virusIds: ['v_marxism', 'v_stoicism'],
+  },
+];
+
+// 工具函数
+export const getVirusById = (id: string) => thoughtViruses.find((v) => v.id === id);
+export const getPopulationById = (id: string) => virusPopulations.find((p) => p.id === id);
+export const getHybridById = (id: string) => hybridRecipes.find((h) => h.id === id);
