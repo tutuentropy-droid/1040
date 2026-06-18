@@ -104,12 +104,43 @@ export interface PhilosopherProfile {
   challengeCompletedAt?: number;
 }
 
+// 哲学家关系类型
+export type PhilosopherRelationType =
+  | '师承'      // 直接师徒关系
+  | '继承'      // 思想继承
+  | '批判'      // 批判与反对
+  | '发展'      // 发展与创新
+  | '影响'      // 重要影响
+  | '对立'      // 思想对立
+  | '融合';     // 思想融合
+
+// 哲学家之间的关系
+export interface PhilosopherRelation {
+  id: string;
+  source: string;       // 源哲学家ID（PhilosopherNPC的id，去掉npc_前缀）
+  target: string;       // 目标哲学家ID
+  type: PhilosopherRelationType;
+  description: string;  // 关系描述
+}
+
+// 思想成长记录（用于成长路径）
+export interface ThoughtGrowthPoint {
+  id: string;
+  timestamp: number;
+  philosopherId?: string;     // 关联的哲学家
+  unlockedNodes: string[];    // 解锁的思想节点
+  routeTags: Record<string, number>;  // 思想倾向标签
+  summary: string;            // 成长描述
+}
+
 export type View =
   | 'home'
   | 'questionnaire'
   | 'graph'
   | 'history'
-  | 'nodeDetail';
+  | 'nodeDetail'
+  | 'relationGraph'
+  | 'growthPath';
 
 export interface AppState {
   currentView: View;

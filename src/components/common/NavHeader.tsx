@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { Map, Compass, BookOpen, Lock, Unlock, Users, Clock } from 'lucide-react';
+import { Map, Compass, BookOpen, Lock, Unlock, Users, Clock, GitBranch, TrendingUp } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAppStore } from '@/store/useAppStore';
 import { philosophyNodes } from '@/data/nodes';
@@ -9,8 +9,10 @@ import { cn } from '@/lib/utils';
 // 导航栏按钮配置
 const navItems = [
   { key: 'home', label: '思想地图', icon: Map, path: '/' },
+  { key: 'relation', label: '哲人关系', icon: GitBranch, path: '/relation' },
   { key: 'timeline', label: '思想长河', icon: Clock, path: '/timeline' },
   { key: 'explore', label: '开始探索', icon: Compass, path: '/explore' },
+  { key: 'growth', label: '成长路径', icon: TrendingUp, path: '/growth' },
   { key: 'record', label: '探索记录', icon: BookOpen, path: '/record' },
 ];
 
