@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Sparkles, Trophy, Quote, Scroll, Eye } from 'lucide-react';
+import { X, Sparkles, Trophy, Quote, Scroll, Eye, RotateCcw, LogOut } from 'lucide-react';
 import { useAppStore } from '@/store/useAppStore';
 import { getPhilosopherById } from '@/data/philosophers';
 import { getNodeById } from '@/data/nodes';
@@ -54,6 +54,12 @@ export default function PhilosopherEncounter() {
   const handleCollectReward = () => {
     completeChallenge(philosopher.id, philosopher.rewardNodes);
     setPhase('reward');
+  };
+
+  const handleRetryChallenge = () => {
+    setPhase('challenge');
+    setSelectedOptionId(null);
+    setShowHint(false);
   };
 
   const rewardNodes = philosopher.rewardNodes
@@ -501,23 +507,61 @@ export default function PhilosopherEncounter() {
                         </p>
                       </motion.div>
 
-                      <motion.button
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.8 }}
-                        whileHover={{ scale: 1.03 }}
-                        whileTap={{ scale: 0.97 }}
-                        onClick={handleCollectReward}
-                        className="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl font-semibold"
-                        style={{
-                          background: `linear-gradient(135deg, ${categoryColor}, ${categoryColor}cc)`,
-                          color: '#fff',
-                          boxShadow: `0 4px 20px ${categoryColor}40`,
-                        }}
-                      >
-                        <Trophy size={18} />
-                        领取奖励
-                      </motion.button>
+                      {selectedOption.isCorrect ? (
+                        <motion.button
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: 0.8 }}
+                          whileHover={{ scale: 1.03 }}
+                          whileTap={{ scale: 0.97 }}
+                          onClick={handleCollectReward}
+                          className="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl font-semibold"
+                          style={{
+                            background: `linear-gradient(135deg, ${categoryColor}, ${categoryColor}cc)`,
+                            color: '#fff',
+                            boxShadow: `0 4px 20px ${categoryColor}40`,
+                          }}
+                        >
+                          <Trophy size={18} />
+                          领取奖励
+                        </motion.button>
+                      ) : (
+                        <motion.div
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: 0.8 }}
+                          className="flex flex-col sm:flex-row items-center justify-center gap-3"
+                        >
+                          <motion.button
+                            whileHover={{ scale: 1.03 }}
+                            whileTap={{ scale: 0.97 }}
+                            onClick={handleRetryChallenge}
+                            className="inline-flex items-center gap-2 px-7 py-3.5 rounded-xl font-semibold"
+                            style={{
+                              background: `linear-gradient(135deg, ${categoryColor}, ${categoryColor}cc)`,
+                              color: '#fff',
+                              boxShadow: `0 4px 20px ${categoryColor}40`,
+                            }}
+                          >
+                            <RotateCcw size={18} />
+                            再试一次
+                          </motion.button>
+                          <motion.button
+                            whileHover={{ scale: 1.03 }}
+                            whileTap={{ scale: 0.97 }}
+                            onClick={resetAndClose}
+                            className="inline-flex items-center gap-2 px-7 py-3.5 rounded-xl font-semibold transition-all hover:opacity-90"
+                            style={{
+                              background: 'rgba(255,255,255,0.05)',
+                              border: `1px solid rgba(255,255,255,0.15)`,
+                              color: '#e8e4d9',
+                            }}
+                          >
+                            <LogOut size={18} />
+                            暂离对话
+                          </motion.button>
+                        </motion.div>
+                      )}
                     </motion.div>
                   )}
 
