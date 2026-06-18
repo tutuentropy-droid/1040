@@ -6,6 +6,7 @@ import Timeline from "@/pages/Timeline";
 import RelationGraph from "@/pages/RelationGraph";
 import GrowthPath from "@/pages/GrowthPath";
 import ThoughtExperiment from "@/pages/ThoughtExperiment";
+import DebateArena from "@/pages/DebateArena";
 
 export default function App() {
   return (
@@ -18,6 +19,7 @@ export default function App() {
         <Route path="/relation" element={<RelationGraph />} />
         <Route path="/growth" element={<GrowthPath />} />
         <Route path="/experiment" element={<ThoughtExperiment />} />
+        <Route path="/debate" element={<DebateArena />} />
         <Route path="*" element={<Home />} />
       </Routes>
     </Router>

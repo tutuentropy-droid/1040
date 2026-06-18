@@ -180,6 +180,34 @@ export interface ExperimentSession {
   routeTags: Record<string, number>;
 }
 
+export interface DebateRound {
+  roundNumber: number;
+  philosopherA: {
+    argument: string;
+    type: 'opening' | 'rebuttal' | 'closing';
+  };
+  philosopherB: {
+    argument: string;
+    type: 'opening' | 'rebuttal' | 'closing';
+  };
+}
+
+export interface DebateVerdict {
+  summary: string;
+  keyDisagreement: string;
+  commonGround: string;
+}
+
+export interface DebateMatchup {
+  id: string;
+  philosopherA: string;
+  philosopherB: string;
+  topic: string;
+  description: string;
+  rounds: DebateRound[];
+  verdict: DebateVerdict;
+}
+
 export type View =
   | 'home'
   | 'questionnaire'
