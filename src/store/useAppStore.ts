@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import type { AppState, ExplorationRecord, PhilosopherProfile, Question } from '@/types';
+import type { AppState, ExplorationRecord, PhilosopherProfile, Question, ExperimentSession } from '@/types';
 import {
   loadAppState,
   saveAppState,
@@ -9,6 +9,7 @@ import {
 } from '@/utils/storage';
 import { philosophyNodes } from '@/data/nodes';
 import { questions, getQuestionById, getFirstQuestion } from '@/data/questions';
+import { resolveExperimentEnding } from '@/data/thoughtExperiments';
 
 interface AppStore extends AppState {
   selectedNodeId: string | null;
@@ -40,6 +41,9 @@ interface AppStore extends AppState {
   encounterPhilosopher: (philosopherId: string) => void;
   completeChallenge: (philosopherId: string, rewardNodes: string[]) => void;
   setActivePhilosopher: (philosopherId: string | null) => void;
+  startExperiment: (experimentId: string) => void;
+  selectExperimentOption: (experimentId: string, stepId: string, optionId: string, routeTags: Record<string, number>, nextStepId: string | null) => void;
+  completeExperiment: (experimentId: string) => void;
 }
 
 const initialState: AppState = {
@@ -54,6 +58,9 @@ const initialState: AppState = {
   records: [],
   encounteredPhilosophers: [],
   completedChallenges: [],
+  experimentSessions: [],
+  completedExperiments: [],
+  experimentRouteTags: {},
 };
 
 export const useAppStore = create<AppStore>((set, get) => ({
@@ -253,6 +260,92 @@ export const useAppStore = create<AppStore>((set, get) => ({
 
   setActivePhilosopher: (philosopherId) => {
     set({ activePhilosopherId: philosopherId });
+  },
+
+  startExperiment: (experimentId) => {
+    const state = get();
+    const existing = state.experimentSessions.find(
+      (s) => s.experimentId === experimentId && !s.completedAt,
+    );
+    if (existing) return;
+
+    const newSession: ExperimentSession = {
+      experimentId,
+      startedAt: Date.now(),
+      choices: [],
+      routeTags: {},
+    };
+    const newState = {
+      experimentSessions: [...state.experimentSessions, newSession],
+    };
+    set(newState);
+    saveAppState({ ...state, ...newState });
+  },
+
+  selectExperimentOption: (experimentId, stepId, optionId, routeTags, nextStepId) => {
+    const state = get();
+    const updatedSessions = state.experimentSessions.map((s) => {
+      if (s.experimentId === experimentId && !s.completedAt) {
+        const newTags = { ...s.routeTags };
+        Object.entries(routeTags).forEach(([tag, score]) => {
+          newTags[tag] = (newTags[tag] || 0) + score;
+        });
+        return {
+          ...s,
+          choices: [...s.choices, { stepId, optionId }],
+          routeTags: newTags,
+        };
+      }
+      return s;
+    });
+
+    const globalExpTags = { ...state.experimentRouteTags };
+    Object.entries(routeTags).forEach(([tag, score]) => {
+      globalExpTags[tag] = (globalExpTags[tag] || 0) + score;
+    });
+
+    const globalTags = { ...state.routeTags };
+    Object.entries(routeTags).forEach(([tag, score]) => {
+      globalTags[tag] = (globalTags[tag] || 0) + score;
+    });
+
+    const newState = {
+      experimentSessions: updatedSessions,
+      experimentRouteTags: globalExpTags,
+      routeTags: globalTags,
+    };
+    set(newState);
+    saveAppState({ ...state, ...newState });
+  },
+
+  completeExperiment: (experimentId) => {
+    const state = get();
+    const session = state.experimentSessions.find(
+      (s) => s.experimentId === experimentId && !s.completedAt,
+    );
+    if (!session) return;
+
+    const endingId = resolveExperimentEnding(experimentId, session.routeTags);
+
+    const updatedSessions = state.experimentSessions.map((s) => {
+      if (s.experimentId === experimentId && !s.completedAt) {
+        return {
+          ...s,
+          completedAt: Date.now(),
+          endingId,
+        };
+      }
+      return s;
+    });
+
+    const newState = {
+      experimentSessions: updatedSessions,
+      completedExperiments: state.completedExperiments.includes(experimentId)
+        ? state.completedExperiments
+        : [...state.completedExperiments, experimentId],
+    };
+    set(newState);
+    saveAppState({ ...state, ...newState });
   },
 }));
 

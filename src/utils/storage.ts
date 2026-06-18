@@ -89,6 +89,9 @@ export const defaultAppState: AppState = {
   records: [],
   encounteredPhilosophers: [],
   completedChallenges: [],
+  experimentSessions: [],
+  completedExperiments: [],
+  experimentRouteTags: {},
 };
 
 /**

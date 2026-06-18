@@ -133,6 +133,53 @@ export interface ThoughtGrowthPoint {
   summary: string;            // 成长描述
 }
 
+export interface ExperimentStepOption {
+  id: string;
+  text: string;
+  nextStepId: string | null;
+  feedback: string;
+  philosophyExplanation: string;
+  philosophySchools: string[];
+  routeTags: Record<string, number>;
+}
+
+export interface ExperimentStep {
+  id: string;
+  title: string;
+  description: string;
+  options: ExperimentStepOption[];
+}
+
+export interface ExperimentEnding {
+  id: string;
+  title: string;
+  description: string;
+  philosophySchools: string[];
+  routeTags: Record<string, number>;
+  advice: string;
+}
+
+export interface ThoughtExperimentData {
+  id: string;
+  title: string;
+  subtitle: string;
+  description: string;
+  icon: string;
+  difficulty: 'beginner' | 'intermediate' | 'advanced';
+  relatedNodes: string[];
+  steps: ExperimentStep[];
+  endings: ExperimentEnding[];
+}
+
+export interface ExperimentSession {
+  experimentId: string;
+  startedAt: number;
+  completedAt?: number;
+  choices: { stepId: string; optionId: string }[];
+  endingId?: string;
+  routeTags: Record<string, number>;
+}
+
 export type View =
   | 'home'
   | 'questionnaire'
@@ -154,4 +201,7 @@ export interface AppState {
   records: ExplorationRecord[];
   encounteredPhilosophers: PhilosopherProfile[];
   completedChallenges: string[];
+  experimentSessions: ExperimentSession[];
+  completedExperiments: string[];
+  experimentRouteTags: Record<string, number>;
 }
